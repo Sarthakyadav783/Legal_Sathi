@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal Sathi</title>
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 500px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .logo span {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        .message-area {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            min-height: 200px;
+        }
+
+        .input-area {
+            margin-top: 15px;
+        }
+
+        .input-area textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 1rem;
+            resize: none;
+        }
+
+        .input-area button {
+            display: block;
+            width: 100%;
+            background-color: #555;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .input-area button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <span>Legal Sathi</span>
+        </div>
+        <div class="input-area">
+            <textarea id="query" rows="5" cols="50"></textarea>
+            <button onclick="submitQuery()">Submit Query</button>
+        </div>
+        <div id="response" class="message-area"></div>
+    </div>
+
+    <script src="{{ url_for('static', path='/script.js') }}"></script>
+</body>
+</html>
