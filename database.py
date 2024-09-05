@@ -9,12 +9,11 @@ from langchain.vectorstores.chroma import Chroma
 
 
 CHROMA_PATH = "chroma"
-DATA_PATH = "/Users/sarthakyadav/Desktop/Legal-Sathi/data"
+DATA_PATH = "/Users/sarthakyadav/Desktop/Legal_Sathi/data"
 
 
 def main():
 
-    # Check if the database should be cleared (using the --clear flag).
     parser = argparse.ArgumentParser()
     parser.add_argument("--reset", action="store_true", help="Reset the database.")
     args = parser.parse_args()
@@ -22,7 +21,6 @@ def main():
         print("✨ Clearing Database")
         clear_database()
 
-    # Create (or update) the data store.
     documents = load_documents()
     chunks = split_documents(documents)
     add_to_chroma(chunks)
@@ -106,5 +104,5 @@ def clear_database():
         shutil.rmtree(CHROMA_PATH)
 
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()

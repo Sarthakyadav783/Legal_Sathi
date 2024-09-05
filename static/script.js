@@ -1,21 +1,30 @@
-// script.js
-async function submitQuery() {
-    const inputElement = document.getElementById('input-message');
-    const messageArea = document.getElementById('message-area');
+console.log("Script starting...");
 
+function submitQuery() {
+    console.log("submitQuery function called");
+    const inputElement = document.getElementById('query');
+    const messageArea = document.getElementById('response');
+    
     if (!inputElement) {
-        console.error("Input element not found");
+        console.error("Input element with id 'query' not found");
+        alert("Error: Input element not found. Please check the console for more details.");
         return;
     }
 
     if (!messageArea) {
-        console.error("Message area not found");
+        console.error("Message area with id 'response' not found");
+        alert("Error: Message area not found. Please check the console for more details.");
         return;
     }
 
     const query = inputElement.value;
 
-    if (query.trim() === '') return;
+    if (query.trim() === '') {
+        console.log("Empty query submitted");
+        return;
+    }
+
+    console.log("Query submitted:", query);
 
     // Add user message
     addMessage('user', query);
@@ -26,28 +35,27 @@ async function submitQuery() {
     // Add loading message
     const loadingId = addMessage('assistant', 'Processing...');
 
-    try {
-        console.log('Sending query:', query);
-        const result = await fetch('/query', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: query })
-        });
-        console.log('Received response from server');
-        const data = await result.json();
-        console.log('Parsed response:', data);
-        
-        // Replace loading message with actual response
-        updateMessage(loadingId, data.response);
-    } catch (error) {
-        console.error('Error:', error);
-        // Replace loading message with error
-        updateMessage(loadingId, 'Error: ' + error.message);
-    }
+    // Send query to the backend via POST request
+    fetch('/query', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: query }),  // Pass the query text
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Response from backend:", data);
+        updateMessage(loadingId, data.response || 'No response from server');
+    })
+    .catch(error => {
+        console.error('Error occurred during the fetch operation:', error);
+        updateMessage(loadingId, 'Error processing your query.');
+    });
 }
 
 function addMessage(sender, text) {
-    const messageArea = document.getElementById('message-area');
+    const messageArea = document.getElementById('response');
     if (!messageArea) {
         console.error("Message area not found");
         return;
@@ -71,18 +79,29 @@ function updateMessage(id, text) {
     }
 }
 
-// Add event listener for Enter key
-document.addEventListener('DOMContentLoaded', (event) => {
-    const inputElement = document.getElementById('input-message');
+// Ensure the DOM is fully loaded before attaching event listeners
+document.addEventListener('DOMContentLoaded', () => {
+    console.log("DOM fully loaded and parsed");
+    const inputElement = document.getElementById('query');
+    const submitButton = document.querySelector('button');
+
     if (inputElement) {
-        inputElement.addEventListener('keypress', function(event) {
+        console.log("Input element found, attaching event listener");
+        inputElement.addEventListener('keypress', (event) => {
             if (event.key === 'Enter') {
                 event.preventDefault();
                 submitQuery();
             }
         });
     } else {
-        console.error("Input element not found for event listener");
+        console.error("Input element with id 'query' not found for event listener");
+    }
+
+    if (submitButton) {
+        console.log("Submit button found, attaching click event listener");
+        submitButton.addEventListener('click', submitQuery);
+    } else {
+        console.error("Submit button not found");
     }
 });
 
