@@ -41,7 +41,7 @@ function submitQuery() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text: query }),  // Pass the query text
+        body: JSON.stringify({ text: query }),
     })
     .then(response => response.json())
     .then(data => {
@@ -62,18 +62,73 @@ function addMessage(sender, text) {
     }
     const messageElement = document.createElement('div');
     messageElement.className = `message ${sender}-message`;
-    messageElement.textContent = text;
     const id = 'msg-' + Date.now();
     messageElement.id = id;
+
+    // Create a structured layout for the message
+    messageElement.innerHTML = `
+        <div class="message-header">
+            <span class="sender-name">${sender === 'user' ? 'You' : 'Assistant'}</span>
+            <span class="timestamp">${new Date().toLocaleTimeString()}</span>
+        </div>
+        <div class="message-content">${formatText(text)}</div>
+    `;
+
     messageArea.appendChild(messageElement);
     messageArea.scrollTop = messageArea.scrollHeight;
     return id;
 }
 
+function formatText(text) {
+    // Split the text into paragraphs
+    let paragraphs = text.split('\n\n');
+
+    // Process each paragraph
+    paragraphs = paragraphs.map(paragraph => {
+        // Check if the paragraph is a numbered list
+        if (/^\d+\.\s/.test(paragraph)) {
+            // It's a numbered list, so we'll keep it as is
+            return paragraph;
+        }
+        
+        // Check if the paragraph is a bulleted list
+        if (/^\*\s/.test(paragraph)) {
+            // It's a bulleted list, so we'll keep it as is
+            return paragraph;
+        }
+
+        // For other paragraphs, we'll split them into sentences
+        let sentences = paragraph.split('. ');
+        sentences = sentences.map(sentence => sentence.trim() + '.');
+        return sentences.join('<br>');
+    });
+
+    // Join the processed paragraphs
+    text = paragraphs.join('<br><br>');
+
+    // Convert URLs to clickable links
+    text = text.replace(/(https?:\/\/[^\s]+)/g, '<a href="$1" target="_blank">$1</a>');
+
+    // Convert markdown-style bold to HTML bold
+    text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // Convert markdown-style italic to HTML italic
+    text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    return text;
+}
+
+// The rest of the JavaScript code remains the same
+
 function updateMessage(id, text) {
     const messageElement = document.getElementById(id);
     if (messageElement) {
-        messageElement.textContent = text;
+        const contentElement = messageElement.querySelector('.message-content');
+        if (contentElement) {
+            contentElement.innerHTML = formatText(text);
+        } else {
+            console.error(`Content element not found in message ${id}`);
+        }
     } else {
         console.error(`Message element with id ${id} not found`);
     }

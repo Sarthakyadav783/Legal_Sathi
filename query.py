@@ -9,13 +9,13 @@ from embedding import get_embedding_function
 CHROMA_PATH = "chroma"
 
 PROMPT_TEMPLATE = """
-Answer the question based only on the following context:
+Answer the question based on the following context and if no context provided as on you own according to indian laws and dont mention context in your reply:
 
 {context}
 
 ---
 
-Answer the question based on the above context: {question}
+Answer the question based on the above context and if no context provided as on you own according to indian laws under 100 words: {question}
 """
 
 
